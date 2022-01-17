@@ -31,9 +31,9 @@ jobs:
         run: |
           cd ${HOME_PATH}
 
-          #VERSION_APPBUILD="$( git describe --tags HEAD )"
-          #BUILD_ARGS="-trimpath -ldflags=-X github.com/pkt-cash/pktd/pktconfig/version.appBuild=${VERSION_APPBUILD}"
-          BUILD_ARGS="-trimpath -ldflags=-X"
+          VERSION_APPBUILD="$( git describe --tags HEAD )"
+          BUILD_ARGS="-trimpath -ldflags=-X github.com/pkt-cash/pktd/pktconfig/version.appBuild=${VERSION_APPBUILD}"
+          #BUILD_ARGS="-trimpath -ldflags=-X"
 
           mkdir bin
           go build ${BUILD_ARGS} -o bin/pktd .
