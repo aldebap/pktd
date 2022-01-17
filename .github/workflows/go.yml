@@ -31,17 +31,28 @@ jobs:
         run: |
           cd ${HOME_PATH}
 
+          # TODO: it's failing and I can't figure out why
           #VERSION_APPBUILD="$( git describe --tags HEAD )"
           #BUILD_ARGS="-trimpath -ldflags=-X github.com/pkt-cash/pktd/pktconfig/version.appBuild=${VERSION_APPBUILD}"
           BUILD_ARGS="-trimpath"
 
+          export  PKTD_APPS="pktd:.
+            pktwallet:pktwallet
+            pktctl:cmd/pktctl
+            checksig:cmd/checksig
+            pld:lnd/cmd/lnd
+            pldctl:lnd/cmd/lncli"
+
           mkdir bin
-          go build ${BUILD_ARGS} -o bin/pktd .
-          go build ${BUILD_ARGS} -o bin/pktwallet ./pktwallet
-          go build ${BUILD_ARGS} -o bin/pktctl ./cmd/pktctl
-          go build ${BUILD_ARGS} -o bin/checksig ./cmd/checksig
-          go build ${BUILD_ARGS} -o bin/pld ./lnd/cmd/lnd
-          go build ${BUILD_ARGS} -o bin/pldctl ./lnd/cmd/lncli
+
+          for PKTD_APP in ${PKTD_APPS}
+          do
+            APP=$( echo ${PKTD_APP} | cut -f1 -d: )
+            PACKAGE=$( echo ${PKTD_APP} | cut -f2 -d: )
+
+            echo "Building ${APP} from package: ${PACKAGE}"
+            go build ${BUILD_ARGS} -o bin/${APP} ./${PACKAGE}
+          done
 
       - name: Integration Tests
         shell: bash
@@ -268,5 +279,6 @@ jobs:
 
           for PKTD_PACKAGE in ${PKTD_DIRS}
           do
+            echo "Running tests on package: ${PKTD_PACKAGE}"
             go test -count=1 -cover -parallel=1 -tags=dev ./${PKTD_PACKAGE}
           done
