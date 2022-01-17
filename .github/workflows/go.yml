@@ -33,29 +33,30 @@ jobs:
         run: |
           cd ${HOME_PATH}
 
+          ./do
           # TODO: it's failing and I can't figure out why
-          VERSION_APPBUILD="$( git describe --tags HEAD )"
-          echo "[debug] version tag: ${VERSION_APPBUILD}"
-          BUILD_ARGS="-trimpath -ldflags=-X github.com/pkt-cash/pktd/pktconfig/version.appBuild=${VERSION_APPBUILD}"
+          #VERSION_APPBUILD="$( git describe --tags HEAD )"
+          #echo "[debug] version tag: ${VERSION_APPBUILD}"
+          #BUILD_ARGS="-trimpath -ldflags=-X github.com/pkt-cash/pktd/pktconfig/version.appBuild=${VERSION_APPBUILD}"
           #BUILD_ARGS="-trimpath"
 
-          export  PKTD_APPS="pktd:.
-            pktwallet:pktwallet
-            pktctl:cmd/pktctl
-            checksig:cmd/checksig
-            pld:lnd/cmd/lnd
-            pldctl:lnd/cmd/lncli"
+          #export  PKTD_APPS="pktd:.
+          #  pktwallet:pktwallet
+          #  pktctl:cmd/pktctl
+          #  checksig:cmd/checksig
+          #  pld:lnd/cmd/lnd
+          #  pldctl:lnd/cmd/lncli"
 
-          mkdir bin
+          #mkdir bin
 
-          for PKTD_APP in ${PKTD_APPS}
-          do
-            APP=$( echo ${PKTD_APP} | cut -f1 -d: )
-            PACKAGE=$( echo ${PKTD_APP} | cut -f2 -d: )
+          #for PKTD_APP in ${PKTD_APPS}
+          #do
+          #  APP=$( echo ${PKTD_APP} | cut -f1 -d: )
+          #  PACKAGE=$( echo ${PKTD_APP} | cut -f2 -d: )
 
-            echo "Building ${APP} from package: ${PACKAGE}"
-            go build ${BUILD_ARGS} -o bin/${APP} ./${PACKAGE}
-          done
+          #  echo "Building ${APP} from package: ${PACKAGE}"
+          #  go build ${BUILD_ARGS} -o bin/${APP} ./${PACKAGE}
+          #done
 
       - name: Integration Tests
         shell: bash
