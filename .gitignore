@@ -1,5 +1,6 @@
 # Temp files
 *~
+lib
 
 # Databases
 btcd.db
@@ -53,6 +54,3 @@ _testmain.go
 
 *.rpm
 *.deb
-
-#testing output files
-*.out
