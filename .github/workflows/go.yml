@@ -30,10 +30,243 @@ jobs:
         shell: bash
         run: |
           cd ${HOME_PATH}
-          ./do
+
+          #VERSION_APPBUILD="$( git describe --tags HEAD )"
+          #BUILD_ARGS="-trimpath -ldflags=-X github.com/pkt-cash/pktd/pktconfig/version.appBuild=${VERSION_APPBUILD}"
+          BUILD_ARGS="-trimpath -ldflags=-X"
+
+          mkdir bin
+          go build ${BUILD_ARGS} -o bin/pktd .
+          go build ${BUILD_ARGS} -o bin/pktwallet ./pktwallet
+          go build ${BUILD_ARGS} -o bin/pktctl ./cmd/pktctl
+          go build ${BUILD_ARGS} -o bin/checksig ./cmd/checksig
+          go build ${BUILD_ARGS} -o bin/pld ./lnd/cmd/lnd
+          go build ${BUILD_ARGS} -o bin/pldctl ./lnd/cmd/lncli
 
       - name: Integration Tests
         shell: bash
         run: |
           cd ${HOME_PATH}
-          ./do --test
+
+          #   run the tests individually
+          export  PKTD_DIRS=". \
+            addrmgr \
+            blockchain \
+            blockchain/fullblocktests \
+            blockchain/indexers \
+            blockchain/packetcrypt \
+            blockchain/packetcrypt/announce \
+            blockchain/packetcrypt/block \
+            blockchain/packetcrypt/block/proof \
+            blockchain/packetcrypt/cryptocycle \
+            blockchain/packetcrypt/difficulty \
+            blockchain/packetcrypt/pcutil \
+            blockchain/packetcrypt/randhash/interpret \
+            blockchain/packetcrypt/randhash/opcodes \
+            blockchain/packetcrypt/randhash/randgen \
+            blockchain/packetcrypt/randhash/util \
+            btcec \
+            btcjson \
+            btcutil \
+            btcutil/base58 \
+            btcutil/bech32 \
+            btcutil/bloom \
+            btcutil/coinset \
+            btcutil/er \
+            btcutil/gcs \
+            btcutil/gcs/builder \
+            btcutil/hdkeychain \
+            btcutil/psbt \
+            btcutil/txsort \
+            btcutil/util \
+            chaincfg \
+            chaincfg/chainhash \
+            chaincfg/genesis \
+            chaincfg/globalcfg \
+            cmd/checksig \
+            cmd/compact2big \
+            cmd/gencerts \
+            cmd/pktctl \
+            cmd/tar2work \
+            connmgr \
+            contrib/build \
+            database \
+            database/ffldb \
+            database/internal/treap \
+            goleveldb/leveldb \
+            goleveldb/leveldb/cache \
+            goleveldb/leveldb/comparer \
+            goleveldb/leveldb/errors \
+            goleveldb/leveldb/filter \
+            goleveldb/leveldb/iterator \
+            goleveldb/leveldb/journal \
+            goleveldb/leveldb/memdb \
+            goleveldb/leveldb/opt \
+            goleveldb/leveldb/storage \
+            goleveldb/leveldb/table \
+            goleveldb/leveldb/testutil \
+            goleveldb/leveldb/util \
+            goleveldb/manualtest/dbstress \
+            goleveldb/manualtest/filelock \
+            integration \
+            integration/rpctest \
+            lightning-onion \
+            lightning-onion/cmd \
+            limits \
+            lnd \
+            lnd/aezeed \
+            lnd/autopilot \
+            lnd/brontide \
+            lnd/buffer \
+            lnd/build \
+            lnd/cert \
+            lnd/chainntnfs \
+            lnd/chainntnfs/btcdnotify \
+            lnd/chainntnfs/neutrinonotify \
+            lnd/chainreg \
+            lnd/chanacceptor \
+            lnd/chanbackup \
+            lnd/chanfitness \
+            lnd/channeldb \
+            lnd/channeldb/kvdb \
+            lnd/channeldb/migration \
+            lnd/channeldb/migration12 \
+            lnd/channeldb/migration13 \
+            lnd/channeldb/migration16 \
+            lnd/channeldb/migration_01_to_11 \
+            lnd/channeldb/migration_01_to_11/zpay32 \
+            lnd/channeldb/migtest \
+            lnd/channelnotifier \
+            lnd/clock \
+            lnd/cmd/lncli \
+            lnd/cmd/lnd \
+            lnd/contractcourt \
+            lnd/discovery \
+            lnd/feature \
+            lnd/fmgr \
+            lnd/healthcheck \
+            lnd/htlcswitch \
+            lnd/htlcswitch/hodl \
+            lnd/htlcswitch/hop \
+            lnd/input \
+            lnd/invoices \
+            lnd/keychain \
+            lnd/labels \
+            lnd/lncfg \
+            lnd/lnpeer \
+            lnd/lnrpc \
+            lnd/lnrpc/autopilotrpc \
+            lnd/lnrpc/chainrpc \
+            lnd/lnrpc/invoicesrpc \
+            lnd/lnrpc/lnclipb \
+            lnd/lnrpc/routerrpc \
+            lnd/lnrpc/signrpc \
+            lnd/lnrpc/verrpc \
+            lnd/lnrpc/walletrpc \
+            lnd/lnrpc/watchtowerrpc \
+            lnd/lnrpc/wtclientrpc \
+            lnd/lntest \
+            lnd/lntest/itest \
+            lnd/lntest/mock \
+            lnd/lntest/wait \
+            lnd/lntypes \
+            lnd/lnwallet \
+            lnd/lnwallet/btcwallet \
+            lnd/lnwallet/chainfee \
+            lnd/lnwallet/chancloser \
+            lnd/lnwallet/chanfunding \
+            lnd/lnwallet/chanvalidate \
+            lnd/lnwire \
+            lnd/macaroons \
+            lnd/monitoring \
+            lnd/multimutex \
+            lnd/nat \
+            lnd/netann \
+            lnd/peer \
+            lnd/peernotifier \
+            lnd/pool \
+            lnd/queue \
+            lnd/record \
+            lnd/routing \
+            lnd/routing/chainview \
+            lnd/routing/localchans \
+            lnd/routing/route \
+            lnd/shachain \
+            lnd/signal \
+            lnd/subscribe \
+            lnd/sweep \
+            lnd/ticker \
+            lnd/tlv \
+            lnd/tor \
+            lnd/walletunlocker \
+            lnd/watchtower \
+            lnd/watchtower/blob \
+            lnd/watchtower/lookout \
+            lnd/watchtower/wtclient \
+            lnd/watchtower/wtdb \
+            lnd/watchtower/wtmock \
+            lnd/watchtower/wtpolicy \
+            lnd/watchtower/wtserver \
+            lnd/watchtower/wtwire \
+            lnd/zpay32 \
+            mempool \
+            mining \
+            mining/cpuminer \
+            netsync \
+            neutrino \
+            neutrino/banman \
+            neutrino/blockntfns \
+            neutrino/cache \
+            neutrino/cache/lru \
+            neutrino/chainsync \
+            neutrino/filterdb \
+            neutrino/headerfs \
+            neutrino/headerlist \
+            neutrino/pushtx \
+            peer \
+            pktconfig \
+            pktconfig/version \
+            pktlog/log \
+            pktwallet \
+            pktwallet/chain \
+            pktwallet/cmd/dropwtxmgr \
+            pktwallet/cmd/wallettool \
+            pktwallet/internal/cfgutil \
+            pktwallet/internal/helpers \
+            pktwallet/internal/legacy/keystore \
+            pktwallet/internal/prompt \
+            pktwallet/internal/rpchelp \
+            pktwallet/internal/zero \
+            pktwallet/netparams \
+            pktwallet/rpc/legacyrpc \
+            pktwallet/snacl \
+            pktwallet/waddrmgr \
+            pktwallet/wallet \
+            pktwallet/wallet/internal/txsizes \
+            pktwallet/wallet/seedwords \
+            pktwallet/wallet/txauthor \
+            pktwallet/wallet/txrules \
+            pktwallet/wallet/watcher \
+            pktwallet/wallet/workqueue \
+            pktwallet/walletdb \
+            pktwallet/walletdb/bdb \
+            pktwallet/walletdb/migration \
+            pktwallet/walletdb/walletdbtest \
+            pktwallet/wtxmgr \
+            rpcclient \
+            txscript \
+            txscript/opcode \
+            txscript/params \
+            txscript/parsescript \
+            txscript/scriptbuilder \
+            txscript/scriptnum \
+            txscript/txscripterr \
+            wire \
+            wire/constants \
+            wire/protocol \
+            wire/ruleerror"
+
+          for PKTD_PACKAGE in ${PKTD_DIRS}
+          do
+            go test -count=1 -cover -parallel=1 -tags=dev ./${PKTD_PACKAGE}
+          done
