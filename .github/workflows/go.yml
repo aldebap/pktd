@@ -32,9 +32,10 @@ jobs:
           cd ${HOME_PATH}
 
           # TODO: it's failing and I can't figure out why
-          #VERSION_APPBUILD="$( git describe --tags HEAD )"
-          #BUILD_ARGS="-trimpath -ldflags=-X github.com/pkt-cash/pktd/pktconfig/version.appBuild=${VERSION_APPBUILD}"
-          BUILD_ARGS="-trimpath"
+          VERSION_APPBUILD="$( git describe --tags HEAD )"
+          echo "[debug] version tag: ${VERSION_APPBUILD}"
+          BUILD_ARGS="-trimpath -ldflags=-X github.com/pkt-cash/pktd/pktconfig/version.appBuild=${VERSION_APPBUILD}"
+          #BUILD_ARGS="-trimpath"
 
           export  PKTD_APPS="pktd:.
             pktwallet:pktwallet
